@@ -828,27 +828,32 @@ function os_vendor()
         rval=apple
     else
         filelist=`'ls' /etc/*-release | egrep -v lsb | egrep -v os`
-        rval=""
-        for file in $filelist
-        do
-	    if [ -f $file ]
-	    then
-		    rval=`basename $file -release`
-		    if [ $rval = 'SuSE' ]
-		    then
-			    if [ -f /etc/UnitedLinux-release ]
-			    then
-				    rval=UnitedLinux
-			    fi
-			elif [ $rval = 'centos' ]
-			then
-				rval=redhat
-			elif [ $rval != 'os' ]
-			then
-				break
-		    fi
-	    fi
-        done
+        if [ $? == 1 ]
+        then
+            rval="custom"
+        else
+            rval=""
+            for file in $filelist
+            do
+                if [ -f $file ]
+                then
+                    rval=`basename $file -release`
+                    if [ $rval = 'SuSE' ]
+                    then
+                        if [ -f /etc/UnitedLinux-release ]
+                        then
+                            rval=UnitedLinux
+                        fi
+                    elif [ $rval = 'centos' ]
+                    then
+                        rval=redhat
+                    elif [ $rval != 'os' ]
+                    then
+                        break
+                    fi
+                fi
+            done
+        fi
     fi
     echo $rval
 }
